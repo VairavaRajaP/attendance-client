@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Notifications } from "expo";
+// import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 
 import expoPushTokensApi from "../api/expoPushTokens";

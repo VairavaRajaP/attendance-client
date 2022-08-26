@@ -3,14 +3,22 @@ import cache from "../utility/cache";
 import authStorage from "../auth/storage";
 
 const apiClient = create({
-  baseURL: "http://192.168.0.14:9000/api",
+  baseURL: "http://192.168.1.3:8000/",
+  // Default headers
+  // headers: {
+  //   // "Cache-Control": "no-cache",
+  //   "Content-Type": "application/json",
+  // },
+  // 10 second timeout...
+  // timeout: 10000
 });
 
-apiClient.addAsyncRequestTransform(async (request) => {
-  const authToken = await authStorage.getToken();
-  if (!authToken) return;
-  request.headers["x-auth-token"] = authToken;
-});
+// apiClient.addAsyncRequestTransform(async (request) => {
+//   const authToken = await authStorage.getToken();
+//   // console.log(authToken);
+//   if (!authToken) return;
+//   request.headers["Authorization"] = authToken;
+// });
 
 const get = apiClient.get;
 apiClient.get = async (url, params, axiosConfig) => {
@@ -22,6 +30,7 @@ apiClient.get = async (url, params, axiosConfig) => {
   }
 
   const data = await cache.get(url);
+  // console.log(data);
   return data ? { ok: true, data } : response;
 };
 

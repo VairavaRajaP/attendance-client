@@ -27,13 +27,16 @@ const menuItems = [
 ];
 
 function AccountScreen({ navigation }) {
-  const { user, logOut } = useAuth();
+  const { user: userStr, logOut } = useAuth();
+  // const userStr = data.toString();
+
+  const user = JSON.parse(userStr);
 
   return (
     <Screen style={styles.screen}>
       <View style={styles.container}>
         <ListItem
-          title={user.name}
+          title={user.username}
           subTitle={user.email}
           image={require("../assets/mosh.jpg")}
         />

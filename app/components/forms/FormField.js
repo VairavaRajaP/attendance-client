@@ -5,19 +5,15 @@ import TextInput from "../TextInput";
 import ErrorMessage from "./ErrorMessage";
 
 function AppFormField({ name, width, ...otherProps }) {
-  const {
-    setFieldTouched,
-    setFieldValue,
-    errors,
-    touched,
-    values,
-  } = useFormikContext();
+  const { setFieldTouched, setFieldValue, errors, touched, values } =
+    useFormikContext();
 
   return (
     <>
       <TextInput
         onBlur={() => setFieldTouched(name)}
         onChangeText={(text) => setFieldValue(name, text)}
+        // value={name === "username" ? values[name].toUpperCase() : values[name]}
         value={values[name]}
         width={width}
         {...otherProps}

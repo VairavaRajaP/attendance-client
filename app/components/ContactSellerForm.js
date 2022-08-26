@@ -1,10 +1,11 @@
 import React from "react";
 import { Alert, Keyboard } from "react-native";
-import { Notifications } from "expo";
+// import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Yup from "yup";
 
 import { Form, FormField, SubmitButton } from "./forms";
-import messagesApi from "../api/messages";
+import * as messagesApi from "../api/messages";
 
 function ContactSellerForm({ listing }) {
   const handleSubmit = async ({ message }, { resetForm }) => {
@@ -19,10 +20,26 @@ function ContactSellerForm({ listing }) {
 
     resetForm();
 
-    Notifications.presentLocalNotificationAsync({
-      title: "Awesome!",
-      body: "Your message was sent to the seller.",
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
     });
+
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Awesome!",
+        body: "Your message was sent to the seller.",
+      },
+      trigger: null,
+    });
+
+    // Notifications.presentLocalNotificationAsync({
+    //   title: "Awesome!",
+    //   body: "Your message was sent to the seller.",
+    // });
   };
 
   return (

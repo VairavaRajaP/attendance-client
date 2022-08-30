@@ -1,4 +1,5 @@
 import * as SecureStore from "expo-secure-store";
+import apiClient from "../api/client";
 import useAuth from "../auth/useAuth";
 
 const access = "authToken";

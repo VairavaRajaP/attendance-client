@@ -8,7 +8,9 @@ export default useAuth = () => {
 
   const logIn = async (authToken) => {
     await authStorage.storeToken(authToken);
-    const { data: user } = await authApi.getMe("JWT " + authToken.access);
+    // const { data: user } = await authApi.getMe("JWT " + authToken.access);
+    const { data: user } = await authApi.getMe();
+
     const userStr = JSON.stringify(user);
     setUser(userStr);
     authStorage.storeUser(userStr);

@@ -27,7 +27,7 @@ const menuItems = [
 ];
 
 function AccountScreen({ navigation }) {
-  const { user: userStr, logOut } = useAuth();
+  const { user: userStr, logOut, getAttendance } = useAuth();
   // const userStr = data.toString();
 
   const user = JSON.parse(userStr);
@@ -60,6 +60,7 @@ function AccountScreen({ navigation }) {
           )}
         />
       </View>
+
       <ListItem
         title="Log Out"
         IconComponent={<Icon name="logout" backgroundColor="#ffe66d" />}

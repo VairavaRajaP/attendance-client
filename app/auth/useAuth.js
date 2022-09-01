@@ -22,5 +22,10 @@ export default useAuth = () => {
     authStorage.removeUser();
   };
 
-  return { user, logIn, logOut, setUser };
+  const getAttendance = async () => {
+    const { data: attendances } = await authApi.getMyAttendance();
+    console.log(attendances);
+  };
+
+  return { user, logIn, logOut, getAttendance, setUser };
 };

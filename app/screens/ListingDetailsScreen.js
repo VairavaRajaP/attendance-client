@@ -11,15 +11,20 @@ function ListingDetailsScreen({ route }) {
 
   return (
     <View>
-      <Image
+      {/* <Image
         style={styles.image}
         preview={{ uri: listing.images[0].thumbnailUrl }}
         tint="light"
         uri={listing.images[0].url}
-      />
+      /> */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.title}>{listing.title}</Text>
-        <Text style={styles.price}>${listing.price}</Text>
+        <Text style={styles.title}>Date : {listing.date}</Text>
+        <Text style={styles.title}>
+          In Time : {listing.in_time.slice(0, listing.in_time.length - 7)}
+        </Text>
+        <Text style={styles.title}>
+          Out Time : {listing.out_time.slice(0, listing.in_time.length - 7)}
+        </Text>
         <View style={styles.userContainer}>
           <ListItem
             image={require("../assets/mosh.jpg")}

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, FlatList, StyleSheet, RefreshControl } from "react-native";
 
 import ActivityIndicator from "../components/ActivityIndicator";
 import Button from "../components/Button";
@@ -23,7 +23,12 @@ function ListingsScreen({ navigation }) {
     getListingsApi.request();
   }, []);
 
-  // console.log(getListingsApi.data.results[0]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getListingsApi.request().finally(() => setRefreshing(false));
+  }, []);
 
   const initial = {
     tableHead: ["Head", "Head2", "Head3", "Head4"],
@@ -74,6 +79,11 @@ function ListingsScreen({ navigation }) {
         {getListingsApi.data.count ? (
           <FlatList
             data={getListingsApi.data.results}
+            // onRefresh={() => onRefresh}
+            // refreshing={fetching}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             keyExtractor={(listing) => listing.id.toString()}
             renderItem={({ item }) => (
               <ListCard

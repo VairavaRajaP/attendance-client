@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, RefreshControl } from "react-native";
+import { View, FlatList, StyleSheet, RefreshControl } from "react-native";
+import * as Location from "expo-location";
 
 import ActivityIndicator from "../components/ActivityIndicator";
 import Button from "../components/Button";
-// import Card from "../components/Card";
 import ListCard from "../components/ListCard";
-// import Text from "../components/Text";
 import colors from "../config/colors";
 // import listingsApi from "../api/listings";
 import authApi from "../api/auth";
@@ -13,48 +12,28 @@ import routes from "../navigation/routes";
 import Screen from "../components/Screen";
 import AppText from "../components/Text";
 import useApi from "../hooks/useApi";
-import Table from "../components/Table";
+import { getLocation } from "../hooks/useLocation";
 
 function ListingsScreen({ navigation }) {
   // const getListingsApi = useApi(listingsApi.getListings);
-  const getListingsApi = useApi(authApi.getMyAttendance);
+  const getListingsApi = useApi(authApi.getMyAttendances);
+  const postAttendanceApi = useApi(authApi.postMyAttendance);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const today = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     getListingsApi.request();
   }, []);
 
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    getListingsApi.request().finally(() => setRefreshing(false));
+    let location = await getLocation();
+    await postAttendanceApi.request(location);
+    await getListingsApi.request();
+    setRefreshing(false);
   }, []);
-
-  const initial = {
-    tableHead: ["Head", "Head2", "Head3", "Head4"],
-    tableData: [
-      ["1", "2", "3", "4"],
-      ["a", "b", "c", "d"],
-      ["1", "2", "3", "4"],
-      ["a", "b", "c", "d"],
-    ],
-  };
-
-  const table = ({ item }) => {
-    return (
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ width: 80 }}>
-          <Text>{item.date}</Text>
-        </View>
-        <View style={{ width: 110 }}>
-          <Text>{item.in_time}</Text>
-        </View>
-        <View style={{ width: 110 }}>
-          <Text>{item.out_time}</Text>
-        </View>
-      </View>
-    );
-  };
 
   return (
     <Screen style={styles.screen}>
@@ -64,50 +43,66 @@ function ListingsScreen({ navigation }) {
           <Button title="Retry" onPress={getListingsApi.request} />
         </>
       )}
+      {postAttendanceApi.data.error && (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <AppText
+            style={{
+              color: colors.danger,
+              fontWeight: "bold",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              margin: 10,
+            }}
+          >
+            {postAttendanceApi.data.error}.
+          </AppText>
+          {/* <Button title={postAttendanceApi.data.error} onPress={onRefresh} /> */}
+        </View>
+      )}
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator visible={getListingsApi.loading} />
         <ListCard
-          title="       Date"
+          title="      Date"
           subTitle1="      In time"
           subTitle2="    Out time"
-          // imageUrl={item.images[0].url}
-          // onPress={() =>
-          //   navigation.navigate(routes.LISTING_DETAILS, item)
-          // }
-          // thumbnailUrl={item.images[0].thumbnailUrl}
         />
         {getListingsApi.data.count ? (
           <FlatList
             data={getListingsApi.data.results}
-            // onRefresh={() => onRefresh}
-            // refreshing={fetching}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             keyExtractor={(listing) => listing.id.toString()}
             renderItem={({ item }) => (
               <ListCard
-                title={item.date}
+                title={item.date === today ? "     Today     " : item.date}
                 subTitle1={item.in_time.slice(0, item.in_time.length - 7)}
                 subTitle2={item.out_time.slice(0, item.in_time.length - 7)}
-                // imageUrl={item.images[0].url}
                 onPress={() =>
                   navigation.navigate(routes.LISTING_DETAILS, item)
                 }
-                // thumbnailUrl={item.images[0].thumbnailUrl}
               />
             )}
           />
         ) : null}
+        <ActivityIndicator visible={getListingsApi.loading} />
+        {/* {location ? (
+          <>
+            <ListCard
+              title=""
+              subTitle1={"Latitude:" + location.latitude}
+              subTitle2={"Longitude:" + location.longitude}
+            />
+          </>
+        ) : null} */}
       </View>
-      {/* <Table initial={getListingsApi.data.results} /> */}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    padding: 20,
+    padding: 10,
     backgroundColor: colors.light,
   },
 });

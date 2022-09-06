@@ -17,7 +17,14 @@ function Card({
     <TouchableWithoutFeedback onPress={onPress}>
       <View style={styles.card}>
         <View style={styles.detailsContainer}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text
+            style={
+              title.trim() == "Today"
+                ? { ...styles.title, fontWeight: "bold" }
+                : styles.title
+            }
+            numberOfLines={1}
+          >
             {title}
           </Text>
           <Text style={styles.subTitle} numberOfLines={2}>
@@ -46,6 +53,7 @@ const styles = StyleSheet.create({
   subTitle: {
     color: colors.secondary,
     fontWeight: "bold",
+    textAlign: "center",
     marginLeft: 5,
     marginRight: 5,
   },
